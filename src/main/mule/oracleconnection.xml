@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="b110140a-a7f6-4c49-ae87-416c9c41cd7a" >
+		<db:oracle-connection host="localhost" user="localhost" password="localhost" serviceName="xe" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="dccfcb38-12f8-4a59-b606-b0a84afdc792" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="oracleconnectionFlow" doc:id="0849c7ff-9571-4ea5-88f1-177d7d47bb79" >
+		<http:listener doc:name="Listener" doc:id="2343028a-5d23-4ce1-a96e-5847b59c4fbe" config-ref="HTTP_Listener_config" path="getUser"/>
+		<db:select doc:name="Select" doc:id="5ea7d1c1-7d26-4a38-b7fc-a0176a188be7" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM USERS]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="778ca820-1fb8-4d27-854d-5d00fe252df8" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="324658dc-ae4e-446a-a6f4-02ed3cb2a1f7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="a1a5c03b-85e0-40f8-b665-8e645cad66a5" />
+	</flow>
+</mule>
