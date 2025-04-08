@@ -1,6 +1,5 @@
 # MuleSoft-Trainning
 Practices to learn MuleSoft Integration Software
-
 I include SQL practice code to create databases to test conections and integrate data using anypoint studio.
 _________________________________________________________________________________________________________________________________
 ORACLE
